@@ -22,15 +22,33 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+
+# NestJS Products Service
+
+This repository contains a NestJS service for managing products. The service provides functionality to insert, retrieve, update, and delete products. Each product has a unique identifier, title, description, and price.
 
 ## Installation
 
-```bash
-$ npm install
-```
+To use this service in your NestJS application, follow these steps:
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/your-username/your-repo.git
+   ```
+
+2. Navigate to the project directory:
+
+   ```bash
+   cd your-repo
+   ```
+
+3. Install dependencies:
+
+   ```bash
+   npm install
+   ```
 
 ## Running the app
 
@@ -45,29 +63,78 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Test
+## Usage
 
-```bash
-# unit tests
-$ npm run test
+To use the `ProductsService` in your NestJS application, import it into your module and include it in the `providers` array.
 
-# e2e tests
-$ npm run test:e2e
+```typescript
+import { Module } from '@nestjs/common';
+import { ProductsService } from './path-to-products-service/products.service';
 
-# test coverage
-$ npm run test:cov
+@Module({
+  providers: [ProductsService],
+})
+export class YourModule {}
 ```
 
-## Support
+Then, inject the `ProductsService` into your controllers or other services to interact with products.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Example:
 
-## Stay in touch
+```typescript
+import { Controller, Get, Param } from '@nestjs/common';
+import { ProductsService } from './path-to-products-service/products.service';
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+@Controller('products')
+export class ProductsController {
+  constructor(private readonly productsService: ProductsService) {}
 
-## License
+  @Get()
+  getAllProducts() {
+    return this.productsService.getProducts();
+  }
 
-Nest is [MIT licensed](LICENSE).
+  @Get(':id')
+  getProductById(@Param('id') productId: string) {
+    return this.productsService.getSingleProduct(productId);
+  }
+
+  // Add other CRUD operations as needed
+}
+```
+
+## API Endpoints
+
+- **GET /products**: Retrieve a list of all products.
+- **GET /products/:id**: Retrieve details of a single product by its ID.
+- **POST /products**: Insert a new product.
+- **PUT /products/:id**: Update an existing product by ID.
+- **DELETE /products/:id**: Delete a product by its ID.
+
+## Methods
+
+### `insertProduct(title: string, description: string, price: number): string`
+
+Insert a new product with the given title, description, and price. Returns the ID of the newly created product.
+
+### `getProducts(): Product[]`
+
+Retrieve a list of all products.
+
+### `getSingleProduct(productId: string): { product: Product }`
+
+Retrieve details of a single product by its ID.
+
+### `updateProduct(productId: string, title: string, desc: string, price: number): void`
+
+Update an existing product by ID. Provide the new title, description, and/or price to update the product.
+
+### `deleteProduct(prodId: string): void`
+
+Delete a product by its ID.
+
+## Error Handling
+
+If a product is not found during retrieval or update operations, a `NotFoundException` is thrown.
+
+Feel free to integrate and customize this service to suit your specific application requirements. If you encounter any issues or have suggestions, please open an issue on this repository.
